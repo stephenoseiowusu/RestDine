@@ -2,120 +2,105 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
-using System.Web;
-using System.Web.Mvc;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Description;
 using RestDineLib;
 
 namespace RestDine.Controllers
 {
-    public class UsersController : Controller
+    public class UsersController : ApiController
     {
         private FastFoodFinderEntities db = new FastFoodFinderEntities();
 
-        // GET: Users
-        public async Task<ActionResult> Index()
+        // GET: api/Users
+        public IQueryable<User> GetUsers()
         {
-            return View(await db.Users.ToListAsync());
+            return db.Users;
         }
 
-        // GET: Users/Details/5
-        public async Task<ActionResult> Details(int? id)
+        // GET: api/Users/5
+        [HttpGet]
+        [ResponseType(typeof(User))]
+        public async Task<IHttpActionResult> GetUser(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             User user = await db.Users.FindAsync(id);
             if (user == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            return View(user);
+
+            return Ok(user);
         }
 
-        // GET: Users/Create
-        public ActionResult Create()
+        // PUT: api/Users/5
+        [ResponseType(typeof(void))]
+        public async Task<IHttpActionResult> PutUser(int id, User user)
         {
-            return View();
-        }
-
-        
-
-        // POST: Users/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "ID,Email,Password,Name,Creditcard")] User user)
-        {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                db.Users.Add(user);
+                return BadRequest(ModelState);
+            }
+
+            if (id != user.ID)
+            {
+                return BadRequest();
+            }
+
+            db.Entry(user).State = EntityState.Modified;
+
+            try
+            {
                 await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
-            return View(user);
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // GET: Users/Edit/5
-        public async Task<ActionResult> Edit(int? id)
+        // POST: api/Users
+        [ResponseType(typeof(User))]
+        public async Task<IHttpActionResult> PostUser(User user)
         {
-            if (id == null)
+            if (!ModelState.IsValid)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest(ModelState);
             }
+
+            db.Users.Add(user);
+            await db.SaveChangesAsync();
+
+            return CreatedAtRoute("DefaultApi", new { id = user.ID }, user);
+        }
+
+        // DELETE: api/Users/5
+        [ResponseType(typeof(User))]
+        public async Task<IHttpActionResult> DeleteUser(int id)
+        {
             User user = await db.Users.FindAsync(id);
             if (user == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            return View(user);
-        }
 
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "ID,Email,Password,Name,Creditcard")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(user).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            return View(user);
-        }
-
-        // GET: Users/Delete/5
-        public async Task<ActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = await db.Users.FindAsync(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
-        }
-
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
-        {
-            User user = await db.Users.FindAsync(id);
             db.Users.Remove(user);
             await db.SaveChangesAsync();
-            return RedirectToAction("Index");
+
+            return Ok(user);
         }
 
         protected override void Dispose(bool disposing)
@@ -125,6 +110,11 @@ namespace RestDine.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private bool UserExists(int id)
+        {
+            return db.Users.Count(e => e.ID == id) > 0;
         }
     }
 }
