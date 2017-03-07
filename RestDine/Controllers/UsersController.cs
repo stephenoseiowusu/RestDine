@@ -10,21 +10,71 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using RestDineLib;
+using ED = RestDineLib;
+using MD = RestDine.Models;
+using Newtonsoft.Json.Linq;
 
 namespace RestDine.Controllers
 {
     public class UsersController : ApiController
     {
-        private FastFoodFinderEntities db = new FastFoodFinderEntities();
+        private FastFoodFinderEntities1 db = new FastFoodFinderEntities1();
 
         // GET: api/Users
+       [HttpPost]
+       public async Task<IHttpActionResult> createUser(MD.User user)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            ED.User newuser = ConvertModelToEntity.ConvertNewToUser(user);
+            db.Users.Add(newuser);
+            await db.SaveChangesAsync();
+            return StatusCode(HttpStatusCode.Created);
+        }
+        [HttpGet]
+        public async Task<IHttpActionResult> GetInfo([FromUri]String username)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = from tempuser in db.Users
+                       where tempuser.Email == username
+                       select tempuser;
+
+            return Content(HttpStatusCode.OK, user);
+        }
+        [HttpGet]
+        public async Task<IHttpActionResult> Login([FromUri]String username,[FromUri]String password)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var users = from tempuser in db.Users
+                        where tempuser.Email == username
+                        && tempuser.Password == password
+                        select tempuser;
+            if (users.ToList().Count > 0 )
+            {
+             return StatusCode(HttpStatusCode.OK);
+            }
+            else
+            {
+             return StatusCode(HttpStatusCode.NotFound);
+            }
+
+        }
+
+        /*
         public IQueryable<User> GetUsers()
         {
             return db.Users;
         }
 
         // GET: api/Users/5
-        [HttpGet]
         [ResponseType(typeof(User))]
         public async Task<IHttpActionResult> GetUser(int id)
         {
@@ -73,7 +123,7 @@ namespace RestDine.Controllers
         }
 
         // POST: api/Users
-        [ResponseType(typeof(User))]
+    /*    [ResponseType(typeof(User))]
         public async Task<IHttpActionResult> PostUser(User user)
         {
             if (!ModelState.IsValid)
@@ -85,7 +135,7 @@ namespace RestDine.Controllers
             await db.SaveChangesAsync();
 
             return CreatedAtRoute("DefaultApi", new { id = user.ID }, user);
-        }
+        }*/
 
         // DELETE: api/Users/5
         [ResponseType(typeof(User))]

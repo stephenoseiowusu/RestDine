@@ -13,8 +13,6 @@
           <Property Name="Name" Type="varchar" MaxLength="40" Nullable="false" />
           <Property Name="Description" Type="varchar" MaxLength="200" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'FastFoodFinder.dbo.Last_Location' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Last_Location">
           <Key>
             <PropertyRef Name="User_ID" />
@@ -197,16 +195,11 @@ warning 6002: The table/view 'FastFoodFinder.dbo.User_Favorites' does not have a
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="FastFoodFinderModelStoreContainer">
           <EntitySet Name="Brand" EntityType="Self.Brand" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Last_Location" EntityType="Self.Last_Location" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Location" EntityType="Self.Location" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Restaurant" EntityType="Self.Restaurant" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Last_Location" EntityType="Self.Last_Location" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [Last_Location].[User_ID] AS [User_ID], 
-    [Last_Location].[Location_ID] AS [Location_ID]
-    FROM [dbo].[Last_Location] AS [Last_Location]</DefiningQuery>
-          </EntitySet>
           <EntitySet Name="User_Favorites" EntityType="Self.User_Favorites" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [User_Favorites].[User_ID] AS [User_ID], 
@@ -328,7 +321,7 @@ warning 6002: The table/view 'FastFoodFinder.dbo.User_Favorites' does not have a
           <End Role="Restaurant" Type="Self.Restaurant" Multiplicity="*" />
           <End Role="User" Type="Self.User" Multiplicity="*" />
         </Association>
-        <EntityContainer Name="FastFoodFinderEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="FastFoodFinderEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Brands" EntityType="Self.Brand" />
           <EntitySet Name="Locations" EntityType="Self.Location" />
           <EntitySet Name="Restaurants" EntityType="Self.Restaurant" />
@@ -414,7 +407,7 @@ warning 6002: The table/view 'FastFoodFinder.dbo.User_Favorites' does not have a
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="FastFoodFinderModelStoreContainer" CdmEntityContainer="FastFoodFinderEntities">
+        <EntityContainerMapping StorageEntityContainer="FastFoodFinderModelStoreContainer" CdmEntityContainer="FastFoodFinderEntities1">
           <EntitySetMapping Name="Brands">
             <EntityTypeMapping TypeName="FastFoodFinderModel.Brand">
               <MappingFragment StoreEntitySet="Brand">

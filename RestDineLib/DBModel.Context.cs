@@ -15,10 +15,10 @@ namespace RestDineLib
     using System.Data.Entity.Core.Objects;
     using System.Linq;
     
-    public partial class FastFoodFinderEntities : DbContext
+    public partial class FastFoodFinderEntities1 : DbContext
     {
-        public FastFoodFinderEntities()
-            : base("name=FastFoodFinderEntities")
+        public FastFoodFinderEntities1()
+            : base("name=FastFoodFinderEntities1")
         {
         }
     
