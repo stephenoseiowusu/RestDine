@@ -21,8 +21,8 @@ namespace RestDine
             );
             routes.MapHttpRoute(
              name: "API Default",
-              routeTemplate: "api/{controller}/{id}",
-              defaults: new { id = RouteParameter.Optional }
+              routeTemplate: "api/{controller}/{method}",
+              defaults: new { method = RouteParameter.Optional }
             );
         }
     }

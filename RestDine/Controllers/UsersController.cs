@@ -13,6 +13,7 @@ using RestDineLib;
 using ED = RestDineLib;
 using MD = RestDine.Models;
 using Newtonsoft.Json.Linq;
+using System.Data.Entity.Core.Objects;
 
 namespace RestDine.Controllers
 {
@@ -20,6 +21,51 @@ namespace RestDine.Controllers
     {
         private FastFoodFinderEntities1 db = new FastFoodFinderEntities1();
 
+        [HttpPut]
+        public async Task<IHttpActionResult> insertFavorite([FromUri]String Hash,[FromUri]String Username,[FromUri]int id, [FromUri] long X, [FromUri] long Y)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if(!Security.GetHashString(Username).Equals(Hash))
+            {
+                return StatusCode(HttpStatusCode.Forbidden);
+            }
+            var restInt = from restInteger in db.Locations
+                           where restInteger.LongX == X & restInteger.LongY == Y
+                           select restInteger.ID;
+            
+            ObjectParameter output = new ObjectParameter("OutputParameterName", typeof(int));
+            db.AddUserFavorite(id, restInt.First(),output);
+            await db.SaveChangesAsync();
+            if(output.Value.Equals( 1))
+            {
+                return StatusCode(HttpStatusCode.NoContent);
+            }
+            else
+            {
+                return StatusCode(HttpStatusCode.Conflict);
+            }
+        }
+        [HttpPut]
+        public async Task<IHttpActionResult> upDateUser([FromUri] int id, MD.User user)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            ED.User use = ConvertModelToEntity.ConvertNewToUser(user);
+            ED.User newUser = db.Users.SingleOrDefault(u => u.ID == use.ID);
+            newUser.Password = use.Password;
+            newUser.Email = use.Email;
+            newUser.Creditcard = use.Creditcard;
+            newUser.Name = use.Name;
+            db.Entry(newUser).State = EntityState.Modified;
+            await db.SaveChangesAsync();
+            return StatusCode(HttpStatusCode.NoContent);
+;        }
         // GET: api/Users
        [HttpPost]
        public async Task<IHttpActionResult> createUser(MD.User user)
@@ -46,6 +92,23 @@ namespace RestDine.Controllers
 
             return Content(HttpStatusCode.OK, user);
         }
+        [HttpPut]
+        public async Task<IHttpActionResult>UpdateLastLocation([FromUri]String username,[FromUri]long x, [FromUri]long y)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = from tempuser in db.Users
+                       where tempuser.Email == username
+                       select tempuser;
+            user.First().Locations.First().LongX = x;
+            user.First().Locations.First().LongY = y;
+            db.Entry(user).State = EntityState.Modified;
+            await db.SaveChangesAsync();
+            return Content(HttpStatusCode.OK, user);
+        }
         [HttpGet]
         public async Task<IHttpActionResult> Login([FromUri]String username,[FromUri]String password)
         {
@@ -59,7 +122,7 @@ namespace RestDine.Controllers
                         select tempuser;
             if (users.ToList().Count > 0 )
             {
-             return StatusCode(HttpStatusCode.OK);
+             return Content(HttpStatusCode.OK,Security.GetHashString(username));
             }
             else
             {
