@@ -80,8 +80,12 @@ namespace RestDine.Controllers
             return StatusCode(HttpStatusCode.Created);
         }
         [HttpGet]
-        public async Task<IHttpActionResult> GetInfo([FromUri]String username)
+        public async Task<IHttpActionResult> GetInfo([FromUri]String hash,[FromUri]String username)
         {
+            if(Security.GetHashString(username) != hash)
+            {
+                return StatusCode(HttpStatusCode.Forbidden);
+            }
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -93,9 +97,12 @@ namespace RestDine.Controllers
             return Content(HttpStatusCode.OK, user);
         }
         [HttpPut]
-        public async Task<IHttpActionResult>UpdateLastLocation([FromUri]String username,[FromUri]long x, [FromUri]long y)
+        public async Task<IHttpActionResult>UpdateLastLocation([FromUri]String hash,[FromUri]String username,[FromUri]long x, [FromUri]long y)
         {
-
+            if (Security.GetHashString(username) != hash)
+            {
+                return StatusCode(HttpStatusCode.Forbidden);
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

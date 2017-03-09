@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RestDine.App_Start;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Formatting;
@@ -14,6 +15,7 @@ namespace RestDine
     {
         protected void Application_Start()
         {
+            NLogConfig.nLogger().Log(new NLog.LogEventInfo(NLog.LogLevel.Info,"this","webservice Started"));
             var rhm = new RequestHeaderMapping("Accept", "text/html", StringComparison.InvariantCultureIgnoreCase, true, "application/json");
             GlobalConfiguration.Configuration.Formatters.JsonFormatter.MediaTypeMappings.Add(rhm);
             AreaRegistration.RegisterAllAreas();

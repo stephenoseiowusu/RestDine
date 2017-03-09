@@ -9,25 +9,26 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using RestDineLib;
+using ED = RestDineLib;
+using MD = RestDine.Models;
 
 namespace RestDine.Controllers
 {
     public class RestaurantsController : ApiController
     {
-        private FastFoodFinderEntities1 db = new FastFoodFinderEntities1();
+        private ED.FastFoodFinderEntities1 db = new ED.FastFoodFinderEntities1();
 
         // GET: api/Restaurants
-        public IQueryable<Restaurant> GetRestaurants()
+        public IQueryable<ED.Restaurant> GetRestaurants()
         {
             return db.Restaurants;
         }
 
         // GET: api/Restaurants/5
-        [ResponseType(typeof(Restaurant))]
+        [ResponseType(typeof(MD.Restaurant))]
         public async Task<IHttpActionResult> GetRestaurant(int id)
         {
-            Restaurant restaurant = await db.Restaurants.FindAsync(id);
+            ED.Restaurant restaurant = await db.Restaurants.FindAsync(id);
             if (restaurant == null)
             {
                 return NotFound();
@@ -37,8 +38,8 @@ namespace RestDine.Controllers
         }
 
         // PUT: api/Restaurants/5
-        [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutRestaurant(int id, Restaurant restaurant)
+       /* [ResponseType(typeof(void))]
+        public async Task<IHttpActionResult> PutRestaurant(int id, MD.Restaurant restaurant)
         {
             if (!ModelState.IsValid)
             {
@@ -69,11 +70,49 @@ namespace RestDine.Controllers
             }
 
             return StatusCode(HttpStatusCode.NoContent);
+        } */
+        [HttpGet]
+        public async Task<IHttpActionResult> GetBrandID([FromUri]String BrandName)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = from tempresult in db.Brands
+                         where tempresult.Name == BrandName
+                         select tempresult;
+            if (result.ToList().Count > 0)
+            {
+                return Ok(result.First().ID);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
+        [ResponseType(typeof(MD.Brand))]
+        public async Task<IHttpActionResult> PostBrand(MD.Brand Tempbrand)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = from tempresult in db.Brands
+                         where tempresult.Name == Tempbrand.BrandName
+                         select tempresult;
+            if(result.ToList().Count > 0)
+            {
+                return Ok();
+            }
 
+            ED.Brand newBrand = ConvertModelToEntity.ConvertBrandToBrand(Tempbrand);
+            db.Brands.Add(newBrand);
+            await db.SaveChangesAsync(); 
+            return Ok(newBrand.Name);
+        }
         // POST: api/Restaurants
-        [ResponseType(typeof(Restaurant))]
-        public async Task<IHttpActionResult> PostRestaurant(Restaurant restaurant)
+        [ResponseType(typeof(MD.Restaurant))]
+        public async Task<IHttpActionResult> PostRestaurant(MD.Restaurant restaurant)
         {
             if (!ModelState.IsValid)
             {
@@ -87,7 +126,7 @@ namespace RestDine.Controllers
         }
 
         // DELETE: api/Restaurants/5
-        [ResponseType(typeof(Restaurant))]
+        [ResponseType(typeof(MD.Restaurant))]
         public async Task<IHttpActionResult> DeleteRestaurant(int id)
         {
             Restaurant restaurant = await db.Restaurants.FindAsync(id);

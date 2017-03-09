@@ -18,5 +18,12 @@ namespace RestDine.Controllers
             tempo.Locations.Add(temp.Loc);
             return tempo;
         } 
+        public static DA.Brand ConvertBrandToBrand(MD.Brand temp)
+        {
+            DA.Brand brand = new DA.Brand();
+            brand.Description = temp.description;
+            brand.Name = temp.BrandName;
+            return brand;
+        }
     }
 }
