@@ -50,11 +50,15 @@ namespace RestDine.Controllers
             }
         }
         [HttpPut]
-        public async Task<IHttpActionResult> upDateUser([FromUri] int id, MD.User user)
+        public async Task<IHttpActionResult> upDateUser([FromUri]String Hash,[FromUri] int id,[FromUri]String username, MD.User user)
         {
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+            if (!Security.GetHashString(username).Equals(Hash))
+            {
+                return StatusCode(HttpStatusCode.Forbidden);
             }
             ED.User use = ConvertModelToEntity.ConvertNewToUser(user);
             ED.User newUser = db.Users.SingleOrDefault(u => u.ID == use.ID);
@@ -123,6 +127,7 @@ namespace RestDine.Controllers
             {
                 return BadRequest(ModelState);
             }
+
             var users = from tempuser in db.Users
                         where tempuser.Email == username
                         && tempuser.Password == password

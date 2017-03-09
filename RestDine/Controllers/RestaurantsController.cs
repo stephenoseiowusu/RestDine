@@ -74,6 +74,7 @@ namespace RestDine.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> GetBrandID([FromUri]String BrandName)
         {
+           
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -89,6 +90,41 @@ namespace RestDine.Controllers
             {
                 return NotFound();
             }
+        }
+        [HttpPost]
+        public async Task<IHttpActionResult> Location([FromUri] long X, [FromUri]long Y,[FromUri] String UnitNumber)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            ED.Location locate = new ED.Location();
+            locate.LongX = X;
+            locate.LongY = Y;
+            locate.Unit_Number = UnitNumber;
+            db.Locations.Add(locate);
+            await db.SaveChangesAsync();
+            var result = from tempresult in db.Locations
+                         where tempresult.LongX == X && tempresult.LongY == Y
+                         select tempresult;
+            return Ok(result.ToArray()[0].ID);
+        }
+        [HttpPost]
+        public async Task<IHttpActionResult> Location([FromUri] long X, [FromUri]long Y)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            ED.Location locate = new ED.Location();
+            locate.LongX = X;
+            locate.LongY = Y;
+            db.Locations.Add(locate);
+            await db.SaveChangesAsync();
+            var result = from tempresult in db.Locations
+                         where tempresult.LongX == X && tempresult.LongY == Y
+                         select tempresult;
+            return Ok(result.ToArray()[0].ID);
         }
         [ResponseType(typeof(MD.Brand))]
         public async Task<IHttpActionResult> PostBrand(MD.Brand Tempbrand)
@@ -108,9 +144,10 @@ namespace RestDine.Controllers
             ED.Brand newBrand = ConvertModelToEntity.ConvertBrandToBrand(Tempbrand);
             db.Brands.Add(newBrand);
             await db.SaveChangesAsync(); 
-            return Ok(newBrand.Name);
+            return Created("GetBrandID",newBrand.Name);
         }
         // POST: api/Restaurants
+        [HttpPost]
         [ResponseType(typeof(MD.Restaurant))]
         public async Task<IHttpActionResult> PostRestaurant(MD.Restaurant restaurant)
         {
@@ -118,28 +155,43 @@ namespace RestDine.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            db.Restaurants.Add(restaurant);
+            ED.Restaurant rest = ConvertModelToEntity.ConvertRestaurantToRestaurant(restaurant);
+            db.Restaurants.Add(rest);
             await db.SaveChangesAsync();
+            return Created("GetRestaurant",rest.Brand_ID);
+        }
 
-            return CreatedAtRoute("DefaultApi", new { id = restaurant.ID }, restaurant);
+        [HttpGet]
+        public async Task<IHttpActionResult> GetRestaurant([FromUri]String restname)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var results = from x in db.Restaurants
+                          where x.Brand.Name == restname
+                          select x;
+
+           // ED.Restaurant rest = ConvertModelToEntity.ConvertRestaurantToRestaurant(results);
+          
+            return Ok();
         }
 
         // DELETE: api/Restaurants/5
-        [ResponseType(typeof(MD.Restaurant))]
-        public async Task<IHttpActionResult> DeleteRestaurant(int id)
-        {
-            Restaurant restaurant = await db.Restaurants.FindAsync(id);
-            if (restaurant == null)
-            {
-                return NotFound();
-            }
+        /*   [ResponseType(typeof(MD.Restaurant))]
+           public async Task<IHttpActionResult> DeleteRestaurant(int id)
+           {
+               Restaurant restaurant = await db.Restaurants.FindAsync(id);
+               if (restaurant == null)
+               {
+                   return NotFound();
+               }
 
-            db.Restaurants.Remove(restaurant);
-            await db.SaveChangesAsync();
+               db.Restaurants.Remove(restaurant);
+               await db.SaveChangesAsync();
 
-            return Ok(restaurant);
-        }
+               return Ok(restaurant);
+           }*/
 
         protected override void Dispose(bool disposing)
         {

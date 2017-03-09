@@ -12,6 +12,7 @@ namespace RestDine.Controllers
         {
             DA.User tempo = new  DA.User();
             tempo.Name = temp.name;
+            tempo.Password = temp.password;
            // tempo.ID = temp.ID;
             tempo.Email = temp.email;
             tempo.Creditcard = temp.creditcard;
@@ -24,6 +25,13 @@ namespace RestDine.Controllers
             brand.Description = temp.description;
             brand.Name = temp.BrandName;
             return brand;
+        }
+        public static DA.Restaurant ConvertRestaurantToRestaurant(MD.Restaurant temp)
+        {
+            DA.Restaurant rest = new DA.Restaurant();
+            rest.Location_ID = temp.Location_ID;
+            rest.Brand_ID = temp.Brand_ID;
+            return rest;
         }
     }
 }
