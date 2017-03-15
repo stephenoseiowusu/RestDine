@@ -19,8 +19,22 @@ namespace RestDine.Controllers
 {
     public class UsersController : ApiController
     {
-        private FastFoodFinderEntities1 db = new FastFoodFinderEntities1();
+        private FastFoodFinderEntities2 db = new FastFoodFinderEntities2();
 
+    /*    [HttpGet]
+        public async Task<IHttpActionResult>GetFavorite([FromUri] String Hash, [FromUri]String username)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!Security.GetHashString(username).Equals(Hash))
+            {
+                return StatusCode(HttpStatusCode.Forbidden);
+            }
+            var result = from x in db.
+
+        }*/
         [HttpPut]
         public async Task<IHttpActionResult> insertFavorite([FromUri]String Hash,[FromUri]String Username,[FromUri]int id, [FromUri] long X, [FromUri] long Y)
         {

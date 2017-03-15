@@ -16,7 +16,7 @@ namespace RestDine.Controllers
 {
     public class RestaurantsController : ApiController
     {
-        private ED.FastFoodFinderEntities1 db = new ED.FastFoodFinderEntities1();
+        private ED.FastFoodFinderEntities2 db = new ED.FastFoodFinderEntities2();
 
         // GET: api/Restaurants
         public IQueryable<ED.Restaurant> GetRestaurants()

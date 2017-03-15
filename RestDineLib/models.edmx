@@ -321,7 +321,7 @@ warning 6002: The table/view 'FastFoodFinder.dbo.User_Favorites' does not have a
           <End Role="Restaurant" Type="Self.Restaurant" Multiplicity="*" />
           <End Role="User" Type="Self.User" Multiplicity="*" />
         </Association>
-        <EntityContainer Name="FastFoodFinderEntities1" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="FastFoodFinderEntities2" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Brands" EntityType="Self.Brand" />
           <EntitySet Name="Locations" EntityType="Self.Location" />
           <EntitySet Name="Restaurants" EntityType="Self.Restaurant" />
@@ -407,7 +407,7 @@ warning 6002: The table/view 'FastFoodFinder.dbo.User_Favorites' does not have a
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="FastFoodFinderModelStoreContainer" CdmEntityContainer="FastFoodFinderEntities1">
+        <EntityContainerMapping StorageEntityContainer="FastFoodFinderModelStoreContainer" CdmEntityContainer="FastFoodFinderEntities2">
           <EntitySetMapping Name="Brands">
             <EntityTypeMapping TypeName="FastFoodFinderModel.Brand">
               <MappingFragment StoreEntitySet="Brand">
