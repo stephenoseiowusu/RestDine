@@ -21,7 +21,7 @@ namespace RestDine.Controllers
     {
         private FastFoodFinderEntities2 db = new FastFoodFinderEntities2();
 
-    /*    [HttpGet]
+        [HttpGet]
         public async Task<IHttpActionResult>GetFavorite([FromUri] String Hash, [FromUri]String username)
         {
             if (!ModelState.IsValid)
@@ -32,9 +32,20 @@ namespace RestDine.Controllers
             {
                 return StatusCode(HttpStatusCode.Forbidden);
             }
-            var result = from x in db.
+            var result = from x in db.Users
+                         where x.Email == username
+                         select x;
+            if(result.ToArray()[0].Restaurants.ToArray().Count() > 0)
+            {
+                return Ok(result.ToArray()[0].Restaurants);
+            }
+            else
+            {
+                return NotFound();
+            }
+            
 
-        }*/
+        }
         [HttpPut]
         public async Task<IHttpActionResult> insertFavorite([FromUri]String Hash,[FromUri]String Username,[FromUri]int id, [FromUri] long X, [FromUri] long Y)
         {
