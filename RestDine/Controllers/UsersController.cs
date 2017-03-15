@@ -98,9 +98,10 @@ namespace RestDine.Controllers
             db.Entry(newUser).State = EntityState.Modified;
             await db.SaveChangesAsync();
             return StatusCode(HttpStatusCode.NoContent);
-;        }
+       }
         // GET: api/Users
-       [HttpPost]
+      
+        [HttpPost]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
         public async Task<IHttpActionResult> createUser(MD.User user)
         {
@@ -108,7 +109,13 @@ namespace RestDine.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            var res = from u in db.Users
+                      where u.Email.ToLower().Equals(user.email.ToLower())
+                      select u;
+            if(res.ToArray().Length > 0)
+            {
+                return StatusCode(HttpStatusCode.Conflict);
+            }
             ED.User newuser = ConvertModelToEntity.ConvertNewToUser(user);
             db.Users.Add(newuser);
             await db.SaveChangesAsync();
