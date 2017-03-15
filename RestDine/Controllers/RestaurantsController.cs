@@ -14,6 +14,7 @@ using MD = RestDine.Models;
 using System.Web.Http.Cors;
 namespace RestDine.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class RestaurantsController : ApiController
     {
         private ED.FastFoodFinderEntities2 db = new ED.FastFoodFinderEntities2();
