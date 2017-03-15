@@ -11,7 +11,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using ED = RestDineLib;
 using MD = RestDine.Models;
-
+using System.Web.Http.Cors;
 namespace RestDine.Controllers
 {
     public class RestaurantsController : ApiController
@@ -19,12 +19,14 @@ namespace RestDine.Controllers
         private ED.FastFoodFinderEntities2 db = new ED.FastFoodFinderEntities2();
 
         // GET: api/Restaurants
+
         public IQueryable<ED.Restaurant> GetRestaurants()
         {
             return db.Restaurants;
         }
 
         // GET: api/Restaurants/5
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         [ResponseType(typeof(MD.Restaurant))]
         public async Task<IHttpActionResult> GetRestaurant(int id)
         {
@@ -38,39 +40,40 @@ namespace RestDine.Controllers
         }
 
         // PUT: api/Restaurants/5
-       /* [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutRestaurant(int id, MD.Restaurant restaurant)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        /* [ResponseType(typeof(void))]
+         public async Task<IHttpActionResult> PutRestaurant(int id, MD.Restaurant restaurant)
+         {
+             if (!ModelState.IsValid)
+             {
+                 return BadRequest(ModelState);
+             }
 
-            if (id != restaurant.ID)
-            {
-                return BadRequest();
-            }
+             if (id != restaurant.ID)
+             {
+                 return BadRequest();
+             }
 
-            db.Entry(restaurant).State = EntityState.Modified;
+             db.Entry(restaurant).State = EntityState.Modified;
 
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RestaurantExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+             try
+             {
+                 await db.SaveChangesAsync();
+             }
+             catch (DbUpdateConcurrencyException)
+             {
+                 if (!RestaurantExists(id))
+                 {
+                     return NotFound();
+                 }
+                 else
+                 {
+                     throw;
+                 }
+             }
 
-            return StatusCode(HttpStatusCode.NoContent);
-        } */
+             return StatusCode(HttpStatusCode.NoContent);
+         } */
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         [HttpGet]
         public async Task<IHttpActionResult> GetBrandID([FromUri]String BrandName)
         {
@@ -91,6 +94,7 @@ namespace RestDine.Controllers
                 return NotFound();
             }
         }
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         [HttpPost]
         public async Task<IHttpActionResult> Location([FromUri] long X, [FromUri]long Y,[FromUri] String UnitNumber)
         {
@@ -109,6 +113,7 @@ namespace RestDine.Controllers
                          select tempresult;
             return Ok(result.ToArray()[0].ID);
         }
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         [HttpPost]
         public async Task<IHttpActionResult> Location([FromUri] long X, [FromUri]long Y)
         {
@@ -126,6 +131,7 @@ namespace RestDine.Controllers
                          select tempresult;
             return Ok(result.ToArray()[0].ID);
         }
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         [ResponseType(typeof(MD.Brand))]
         public async Task<IHttpActionResult> PostBrand(MD.Brand Tempbrand)
         {
@@ -147,6 +153,7 @@ namespace RestDine.Controllers
             return Created("GetBrandID",newBrand.Name);
         }
         // POST: api/Restaurants
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         [HttpPost]
         [ResponseType(typeof(MD.Restaurant))]
         public async Task<IHttpActionResult> PostRestaurant(MD.Restaurant restaurant)
@@ -160,7 +167,7 @@ namespace RestDine.Controllers
             await db.SaveChangesAsync();
             return Created("GetRestaurant",rest.Brand_ID);
         }
-
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         [HttpGet]
         public async Task<IHttpActionResult> GetRestaurant([FromUri]String restname)
         {

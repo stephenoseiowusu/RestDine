@@ -14,6 +14,7 @@ using ED = RestDineLib;
 using MD = RestDine.Models;
 using Newtonsoft.Json.Linq;
 using System.Data.Entity.Core.Objects;
+using System.Web.Http.Cors;
 
 namespace RestDine.Controllers
 {
@@ -22,6 +23,7 @@ namespace RestDine.Controllers
         private FastFoodFinderEntities2 db = new FastFoodFinderEntities2();
 
         [HttpGet]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public async Task<IHttpActionResult>GetFavorite([FromUri] String Hash, [FromUri]String username)
         {
             if (!ModelState.IsValid)
@@ -47,6 +49,7 @@ namespace RestDine.Controllers
 
         }
         [HttpPut]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public async Task<IHttpActionResult> insertFavorite([FromUri]String Hash,[FromUri]String Username,[FromUri]int id, [FromUri] long X, [FromUri] long Y)
         {
 
@@ -75,6 +78,7 @@ namespace RestDine.Controllers
             }
         }
         [HttpPut]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public async Task<IHttpActionResult> upDateUser([FromUri]String Hash,[FromUri] int id,[FromUri]String username, MD.User user)
         {
             if(!ModelState.IsValid)
@@ -97,18 +101,21 @@ namespace RestDine.Controllers
 ;        }
         // GET: api/Users
        [HttpPost]
-       public async Task<IHttpActionResult> createUser(MD.User user)
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
+        public async Task<IHttpActionResult> createUser(MD.User user)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
             ED.User newuser = ConvertModelToEntity.ConvertNewToUser(user);
             db.Users.Add(newuser);
             await db.SaveChangesAsync();
             return StatusCode(HttpStatusCode.Created);
         }
         [HttpGet]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public async Task<IHttpActionResult> GetInfo([FromUri]String hash,[FromUri]String username)
         {
             if(Security.GetHashString(username) != hash)
@@ -126,6 +133,7 @@ namespace RestDine.Controllers
             return Content(HttpStatusCode.OK, user);
         }
         [HttpPut]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public async Task<IHttpActionResult>UpdateLastLocation([FromUri]String hash,[FromUri]String username,[FromUri]long x, [FromUri]long y)
         {
             if (Security.GetHashString(username) != hash)
@@ -146,6 +154,7 @@ namespace RestDine.Controllers
             return Content(HttpStatusCode.OK, user);
         }
         [HttpGet]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public async Task<IHttpActionResult> Login([FromUri]String username,[FromUri]String password)
         {
             if(!ModelState.IsValid)
@@ -239,6 +248,7 @@ namespace RestDine.Controllers
 
         // DELETE: api/Users/5
         [ResponseType(typeof(User))]
+        [EnableCors(origins: "*", headers: "*", methods: "*")]
         public async Task<IHttpActionResult> DeleteUser(int id)
         {
             User user = await db.Users.FindAsync(id);
