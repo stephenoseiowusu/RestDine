@@ -25,7 +25,7 @@ namespace RestDine.Controllers
 
         [HttpGet]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public async Task<IHttpActionResult>GetFavorite([FromUri] String Hash, [FromUri]String username)
+        public async Task<IHttpActionResult>GetFavorite([FromUri] String Hash, [FromUri]String username,[FromUri]String ll)
         {
             if (!ModelState.IsValid)
             {
@@ -40,7 +40,7 @@ namespace RestDine.Controllers
                          select x;
             if(result.ToArray()[0].Restaurants.ToArray().Count() > 0)
             {
-                return Ok(result.ToArray()[0].Restaurants);
+                return Ok(ConvertModelToEntity.convert((result.ToArray()[0].Restaurants)));
             }
             else
             {
@@ -137,8 +137,9 @@ namespace RestDine.Controllers
             var user = from tempuser in db.Users
                        where tempuser.Email == username
                        select tempuser;
-
-            return Content(HttpStatusCode.OK, user);
+          //  MD.User use = new MD.User(user., user.Password, user.Name, (long)user.Locations.Last().LongX, (long)user.Locations.Last().LongY, user.Creditcard);
+            MD.User use = ConvertModelToEntity.ConvertUserBack((ED.User)user.ToArray()[0]);
+            return Content(HttpStatusCode.OK, use);
         }
         [HttpPut]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
