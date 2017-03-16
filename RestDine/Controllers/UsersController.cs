@@ -138,7 +138,7 @@ namespace RestDine.Controllers
                        where tempuser.Email == username
                        select tempuser;
           //  MD.User use = new MD.User(user., user.Password, user.Name, (long)user.Locations.Last().LongX, (long)user.Locations.Last().LongY, user.Creditcard);
-            MD.User use = ConvertModelToEntity.ConvertUserBack((ED.User)user.ToArray()[0]);
+            MD.User use = ConvertModelToEntity.ConvertUserBack(user.ToArray()[0]);
             return Content(HttpStatusCode.OK, use);
         }
         [HttpPut]
