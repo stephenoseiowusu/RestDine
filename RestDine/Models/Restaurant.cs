@@ -10,11 +10,13 @@ namespace RestDine.Models
         public int ID { get; set; }
         public int Location_ID { get; set; }
         public int Brand_ID { get; set; }
-        public Restaurant ( int Location_ID, int Brand_ID, int id)
+        public String name { get; set; }
+        public Restaurant ( int Location_ID, int Brand_ID, int id,String name ="xx")
         {
             this.ID = id;
             this.Location_ID = Location_ID;
             this.Brand_ID = Brand_ID;
+            this.name = name;
         }
     }
 }

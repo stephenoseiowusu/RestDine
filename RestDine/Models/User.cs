@@ -14,7 +14,7 @@ namespace RestDine.Models
         public String name { get; set; }
         public String creditcard { get; set; }
         public Location Loc { get; set; }
-        public User(String email, String password, String name, long X, long Y, String creditcard = "0000000000000000", int ID = 0)
+        public User(String email, String password, String name, long X, long Y , String creditcard = "0000000000000000", int ID = 0)
         {
             this.ID = ID;
             this.email = email;
