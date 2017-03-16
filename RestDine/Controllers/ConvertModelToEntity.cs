@@ -43,13 +43,13 @@ namespace RestDine.Controllers
             List<MD.Restaurant> temp = new List<MD.Restaurant>();
             foreach (DA.Restaurant b in a)
             {
-                var xa = from x in db.Restaurants
+              /*  var xa = from x in db.Restaurants
                          where x.ID == b.ID
                          select x.Brand_ID;
                 var xd = from x in db.Brands
                          where x.ID == xa.ToArray()[0]
-                         select x.Name;
-                MD.Restaurant temps = new MD.Restaurant(b.Location_ID, b.Brand_ID, b.ID, xd.ToArray()[0].ToString());
+                         select x.Name;*/
+                MD.Restaurant temps = new MD.Restaurant(b.Location_ID, b.Brand_ID, b.ID/*, xd.ToArray()[0].ToString()*/);
                 temp.Add(temps);
             }
             return temp;
